@@ -47,10 +47,13 @@ prompt_end() {
 # Context: user@hostname (who am I and where am I)
 prompt_context() {
   local user=`whoami`
+  local hostname=`hostname`
 
-  if [[ "$user" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
-    prompt_segment black default "%(!.%{%F{yellow}%}.)✝"
-  fi
+  prompt_segment 22 white "$user@$hostname"
+}
+
+prompt_time() {
+  prompt_segment 8 white "%D{"%I:%M:%S"}"
 }
 
 # Git: branch/detached head, dirty status
@@ -82,20 +85,21 @@ prompt_dir() {
 prompt_status() {
   local symbols
   symbols=()
-  [[ $RETVAL -ne 0 ]] && symbols+="%{%F{red}%}✘"
-  [[ $UID -eq 0 ]] && symbols+="%{%F{yellow}%}⚡"
-  [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{cyan}%}⚙"
+  [[ $RETVAL -ne 0 ]] && symbols+="%{%F{white}%}✘ $RETVAL"
+  # [[ $UID -eq 0 ]] && symbols+="%{%F{yellow}%}⚡"
+  [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{white}%}⚙"
 
-  [[ -n "$symbols" ]] && prompt_segment black default "$symbols"
+  [[ -n "$symbols" ]] && prompt_segment red white "$symbols"
 }
 
 ## Main prompt
 build_prompt() {
   RETVAL=$?
-  prompt_status
+  prompt_time
   prompt_context
   prompt_dir
   prompt_git
+  prompt_status
   prompt_end
 }
 
