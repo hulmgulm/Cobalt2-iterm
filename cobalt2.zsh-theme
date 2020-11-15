@@ -47,13 +47,13 @@ prompt_end() {
 # Context: user@hostname (who am I and where am I)
 prompt_context() {
   local user=`whoami`
-  local hostname=`hostname`
+  local hostname=`hostname --short | tr '[:upper:]' '[:lower:]'`
 
   prompt_segment 22 white "$user@$hostname"
 }
 
 prompt_time() {
-  prompt_segment 8 white "%D{"%I:%M:%S"}"
+  prompt_segment 8 white "%D{"%H:%M:%S"}"
 }
 
 # Git: branch/detached head, dirty status
